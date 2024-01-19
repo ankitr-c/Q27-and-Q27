@@ -1,0 +1,28 @@
+pipeline {
+    agent any
+    stages {
+        stage("Pull") {
+            steps{
+                echo "Pull Stage"
+                git branch: 'main', credentialsId: 'git-pat', url: 'https://github.com/ankitr-c/weather-api-project.git'
+            }
+            
+        }
+        stage("Build") {
+            steps{
+            echo "Build Stage"
+            sh "sudo docker build -t ankitraut0987/weatherapp:1.0.0.RELEASE ."
+            }
+        }
+        stage("Push") {
+            steps{
+            echo "Push Stage"
+            withCredentials([usernamePassword(credentialsId: 'dockercred', passwordVariable: 'pass', usernameVariable: 'user')]) {
+                sh "sudo docker login -u ${env.user} -p ${env.pass}"
+                sh "sudo docker push ankitraut0987/weatherapp:1.0.0.RELEASE"
+            }
+
+            }
+        }
+    }
+}
