@@ -4,24 +4,14 @@ pipeline {
         stage("Pull") {
             steps{
                 echo "Pull Stage"
-                git branch: 'main', credentialsId: 'git-pat', url: 'https://github.com/ankitr-c/weather-api-project.git'
+                git branch: 'main', url: 'https://github.com/ankitr-c/Q27-and-Q27.git'
             }
             
         }
-        stage("Build") {
+        stage("Deploy") {
             steps{
-            echo "Build Stage"
-            sh "sudo docker build -t ankitraut0987/weatherapp:1.0.0.RELEASE ."
-            }
-        }
-        stage("Push") {
-            steps{
-            echo "Push Stage"
-            withCredentials([usernamePassword(credentialsId: 'dockercred', passwordVariable: 'pass', usernameVariable: 'user')]) {
-                sh "sudo docker login -u ${env.user} -p ${env.pass}"
-                sh "sudo docker push ankitraut0987/weatherapp:1.0.0.RELEASE"
-            }
-
+            echo "Deploy Stage"
+            sh "sudo docker-compose down && sudo docker-compose up -d"
             }
         }
     }
